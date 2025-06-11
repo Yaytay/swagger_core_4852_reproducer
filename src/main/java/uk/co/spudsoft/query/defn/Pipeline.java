@@ -69,7 +69,6 @@ public final class Pipeline extends SourcePipeline {
   private final ImmutableList<Endpoint> sourceEndpoints;
   private final ImmutableMap<String, Endpoint> sourceEndpointsMap;
   private final ImmutableList<DynamicEndpoint> dynamicEndpoints;
-  private final ImmutableList<Format> formats;  
 
   @JsonIgnore
   private String sha256;
@@ -412,84 +411,7 @@ public final class Pipeline extends SourcePipeline {
   public List<DynamicEndpoint> getDynamicEndpoints() {
     return dynamicEndpoints;
   }
-  
-  /**
-   * The outputs that this Pipeline supports.
-   * <p>
-   * The format to use for a pipeline is chosen by according to the following rules:
-   * <ol>
-   * 
-   * <li><pre>_fmt</pre> query string.<br>
-   * If the HTTP request includes a <pre>_fmt</pre> query string argument each Format specified in the Pipeline will be checked (in order)
-   * for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getName()} method.
-   * The first matching Format will be returned.
-   * If no matching Format is found an error will be returned.
-   * 
-   * <li>Path extension.<br>
-   * If the path in the HTTP request includes a '.' (U+002E, Unicode FULL STOP) after the last '/' (U+002F, Unicode SOLIDUS) character everything following that
-   * character will be considered to be the extension, furthermore the extension (and full stop character) will be removed from the filename being sought.
-   * If an extension is found each Format specified in the Pipeline will be checked (in order)
-   * for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getExtension()} method.
-   * The first matching Format will be returned.
-   * If no matching Format is found an error will be returned.
-   * 
-   * <li>Accept header.<br>
-   * If the HTTP request includes an 'Accept' header each Format specified in the Pipeline will be checked (in order)
-   * for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getMediaType() ()} method.
-   * Note that most web browsers include "*\\/*" in their default Accept headers, which will match any Format that specifies a MediaType.
-   * The first matching Format will be returned.
-   * If no matching Format is found an error will be returned.
-   * 
-   * <li>Default<br>
-   * If the request does not use any of these mechanisms then the first Format specified in the Pipeline will be used.
-   * </ol>
-   * @return the outputs that this Pipeline supports.
-   */
-  @ArraySchema(
-          arraySchema = @Schema(
-                  description = """
-                                  <P>The outputs that this Pipeline supports.</P>
-                                  <P>
-                                  The format to use for a pipeline is chosen by according to the following rules:
-                                  <ol>
-                                  
-                                  <li><pre>_fmt</pre> query string.<br>
-                                  If the HTTP request includes a <pre>_fmt</pre> query string argument each Format specified in the Pipeline will be checked (in order)
-                                  for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getName()} method.
-                                  The first matching Format will be returned.
-                                  If no matching Format is found an error will be returned.
-                                  
-                                  <li>Path extension.<br>
-                                  If the path in the HTTP request includes a '.' (U+002E, Unicode FULL STOP) after the last '/' (U+002F, Unicode SOLIDUS) character everything following that
-                                  character will be considered to be the extension, furthermore the extension (and full stop character) will be removed from the filename being sought.
-                                  If an extension is found each Format specified in the Pipeline will be checked (in order)
-                                  for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getExtension()} method.
-                                  The first matching Format will be returned.
-                                  If no matching Format is found an error will be returned.
-                                  
-                                  <li>Accept header.<br>
-                                  If the HTTP request includes an 'Accept' header each Format specified in the Pipeline will be checked (in order)
-                                  for a matching response from the {@link uk.co.spudsoft.query.defn.Format#getMediaType() ()} method.
-                                  Note that most web browsers include "*\\/*" in their default Accept headers, which will match any Format that specifies a MediaType.
-                                  The first matching Format will be returned.
-                                  If no matching Format is found an error will be returned.
-                                  
-                                  <li>Default<br>
-                                  If the request does not use any of these mechanisms then the first Format specified in the Pipeline will be used.
-                                  </ol>
-                                  <p>
-                                  """
-          )
-          , schema = @Schema(
-                  implementation = Format.class
-          )
-          , minItems = 1
-          , uniqueItems = true
-  )
-  public List<Format> getFormats() {
-    return formats;
-  }
-  
+    
   /**
    * Builder class.
    */
@@ -506,7 +428,6 @@ public final class Pipeline extends SourcePipeline {
     private List<Argument> arguments;
     private List<Endpoint> sourceEndpoints;
     private List<DynamicEndpoint> dynamicEndpoints;
-    private List<Format> formats;
 
     private Builder() {
     }
@@ -517,7 +438,7 @@ public final class Pipeline extends SourcePipeline {
      */
     @Override
     public Pipeline build() {
-      return new Pipeline(title, description, condition, cacheDuration, rateLimitRules, argumentGroups, arguments, sourceEndpoints, source, dynamicEndpoints, processors, formats);
+      return new Pipeline(title, description, condition, cacheDuration, rateLimitRules, argumentGroups, arguments, sourceEndpoints, source, dynamicEndpoints, processors);
     }
 
     /**
@@ -631,16 +552,6 @@ public final class Pipeline extends SourcePipeline {
       this.dynamicEndpoints = value;
       return this;
     }
-
-    /**
-     * Set the {@link Pipeline#formats} value in the builder.
-     * @param value The value for the {@link Pipeline#formats}
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder formats(final List<Format> value) {
-      this.formats = value;
-      return this;
-    }
   }
 /**
  * Construct a new Builder object.
@@ -650,7 +561,7 @@ public final class Pipeline extends SourcePipeline {
     return new Pipeline.Builder();
   }
 
-  private Pipeline(String title, String description, Condition condition, Duration cacheDuration, List<RateLimitRule> rateLimitRules, List<ArgumentGroup> argumentGroups, List<Argument> arguments, List<Endpoint> sourceEndpoints, Source source, List<DynamicEndpoint> dynamicEndpoints, List<Processor> processors, List<Format> formats) {
+  private Pipeline(String title, String description, Condition condition, Duration cacheDuration, List<RateLimitRule> rateLimitRules, List<ArgumentGroup> argumentGroups, List<Argument> arguments, List<Endpoint> sourceEndpoints, Source source, List<DynamicEndpoint> dynamicEndpoints, List<Processor> processors) {
     super(source, processors);
     this.title = title;
     this.description = description;
@@ -662,7 +573,6 @@ public final class Pipeline extends SourcePipeline {
     this.sourceEndpoints = ImmutableCollectionTools.copy(sourceEndpoints);    
     this.sourceEndpointsMap = ImmutableCollectionTools.listToMap(sourceEndpoints, e -> e.getName());
     this.dynamicEndpoints = ImmutableCollectionTools.copy(dynamicEndpoints);
-    this.formats = ImmutableCollectionTools.copy(formats);
   }  
   
 }

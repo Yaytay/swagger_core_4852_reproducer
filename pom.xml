@@ -35,7 +35,7 @@
     <junit-platform.version>1.13.1</junit-platform.version>
     <jackson.version>2.19.0</jackson.version>
     
-    <swagger.version>2.2.27</swagger.version>
+    <swagger.version>2.2.28</swagger.version>
   </properties>
 
   <scm>
