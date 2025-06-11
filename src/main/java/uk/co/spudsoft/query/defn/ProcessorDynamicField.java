@@ -112,7 +112,6 @@ import uk.co.spudsoft.query.main.ImmutableCollectionTools;
 public class ProcessorDynamicField implements Processor {
 
   private final ProcessorType type;
-  private final Condition condition;
   private final String name;
   
   private final boolean innerJoin;
@@ -137,11 +136,6 @@ public class ProcessorDynamicField implements Processor {
     return type;
   }
   
-  @Override
-  public Condition getCondition() {
-    return condition;
-  }  
-
   @Override
   public String getName() {
     return name;
@@ -371,7 +365,6 @@ public class ProcessorDynamicField implements Processor {
   public static class Builder {
 
     private ProcessorType type = ProcessorType.DYNAMIC_FIELD;
-    private Condition condition;
     private String name;
     private boolean innerJoin;
     private boolean useCaseInsensitiveFieldNames;
@@ -399,16 +392,6 @@ public class ProcessorDynamicField implements Processor {
       return this;
     }
 
-    /**
-     * Set the {@link ProcessorDynamicField#condition} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#condition}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder condition(final Condition value) {
-      this.condition = value;
-      return this;
-    }
-    
     /**
      * Set the {@link ProcessorDynamicField#name} value in the builder.
      * @param value The value for the {@link ProcessorDynamicField#name}.
@@ -544,7 +527,7 @@ public class ProcessorDynamicField implements Processor {
      * @return a new instance of the ProcessorDynamicField class.
      */
     public ProcessorDynamicField build() {
-      ProcessorDynamicField result = new ProcessorDynamicField(type, condition, name, innerJoin, useCaseInsensitiveFieldNames, fieldIdColumn, fieldNameColumn, fieldTypeColumn, fieldColumnColumn, parentIdColumns, valuesParentIdColumns, valuesFieldIdColumn, fieldValueColumnName, fieldDefns, fieldValues);
+      ProcessorDynamicField result = new ProcessorDynamicField(type, name, innerJoin, useCaseInsensitiveFieldNames, fieldIdColumn, fieldNameColumn, fieldTypeColumn, fieldColumnColumn, parentIdColumns, valuesParentIdColumns, valuesFieldIdColumn, fieldValueColumnName, fieldDefns, fieldValues);
       result.validateType(ProcessorType.DYNAMIC_FIELD, type);
       return result;
     }
@@ -558,13 +541,12 @@ public class ProcessorDynamicField implements Processor {
     return new ProcessorDynamicField.Builder();
   }
 
-  private ProcessorDynamicField(final ProcessorType type, final Condition condition, final String name
+  private ProcessorDynamicField(final ProcessorType type, final String name
           , final boolean innerJoin, final boolean useCaseInsensitiveFieldNames
           , final String fieldIdColumn, final String fieldNameColumn, final String fieldTypeColumn, final String fieldColumnColumn
           , final List<String> parentIdColumns, final List<String> valuesParentIdColumns
           , final String valuesFieldIdColumn, final String fieldValueColumnName, final SourcePipeline fieldDefns, final SourcePipeline fieldValues) {
     this.type = type;
-    this.condition = condition;
     this.name = name;
     this.innerJoin = innerJoin;
     this.useCaseInsensitiveFieldNames = useCaseInsensitiveFieldNames;

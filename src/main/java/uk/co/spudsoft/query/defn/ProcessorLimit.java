@@ -32,7 +32,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class ProcessorLimit implements Processor {
   
   private final ProcessorType type;
-  private final Condition condition;
   private final String name;
   private final int limit;
 
@@ -41,11 +40,6 @@ public class ProcessorLimit implements Processor {
     return type;
   }
   
-  @Override
-  public Condition getCondition() {
-    return condition;
-  }  
-
   @Override
   public String getName() {
     return name;
@@ -70,7 +64,6 @@ public class ProcessorLimit implements Processor {
   public static class Builder {
 
     private ProcessorType type = ProcessorType.LIMIT;
-    private Condition condition;
     private String name;
     private int limit;
 
@@ -87,16 +80,6 @@ public class ProcessorLimit implements Processor {
       return this;
     }
     
-    /**
-     * Set the {@link ProcessorLimit#condition} value in the builder.
-     * @param value The value for the {@link ProcessorLimit#condition}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder condition(final Condition value) {
-      this.condition = value;
-      return this;
-    }
-
     /**
      * Set the {@link ProcessorLimit#name} value in the builder.
      * @param value The value for the {@link ProcessorLimit#name}.
@@ -122,7 +105,7 @@ public class ProcessorLimit implements Processor {
      * @return a new instance of the ProcessorLimit class.
      */
     public ProcessorLimit build() {
-      ProcessorLimit result = new ProcessorLimit(type, condition, name, limit);
+      ProcessorLimit result = new ProcessorLimit(type, name, limit);
       result.validateType(ProcessorType.LIMIT, type);
       return result;
     }
@@ -136,9 +119,8 @@ public class ProcessorLimit implements Processor {
     return new ProcessorLimit.Builder();
   }
 
-  private ProcessorLimit(final ProcessorType type, final Condition condition, final String name, final int limit) {
+  private ProcessorLimit(final ProcessorType type, final String name, final int limit) {
     this.type = type;
-    this.condition = condition;
     this.name = name;
     this.limit = limit;
   }
