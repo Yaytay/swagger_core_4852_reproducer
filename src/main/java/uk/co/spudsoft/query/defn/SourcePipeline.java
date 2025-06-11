@@ -18,12 +18,11 @@ package uk.co.spudsoft.query.defn;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Collections;
 import java.util.List;
-import uk.co.spudsoft.query.main.ImmutableCollectionTools;
 
 /**
  * A SourcePipeline is the core part of a Pipeline, without the globally defined elements.
@@ -44,7 +43,7 @@ import uk.co.spudsoft.query.main.ImmutableCollectionTools;
                       """)
 public class SourcePipeline {
   
-  private final ImmutableList<Processor> processors;
+  private final List<Processor> processors;
 
   /**
    * Processors to run on the data as it flows from the Source.
@@ -127,6 +126,6 @@ public class SourcePipeline {
    * @param processors Processors to run on the data as it flows from the Source.
    */
   protected SourcePipeline(List<Processor> processors) {
-    this.processors = ImmutableCollectionTools.copy(processors);
+    this.processors = processors == null ? Collections.emptyList() : Collections.unmodifiableList(processors);
   }
 }

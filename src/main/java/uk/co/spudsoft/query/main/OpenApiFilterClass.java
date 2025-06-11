@@ -16,7 +16,6 @@
  */
 package uk.co.spudsoft.query.main;
 
-import com.google.common.collect.ImmutableSet;
 import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.oas.models.media.Schema;
 import java.util.List;
@@ -31,10 +30,10 @@ import java.util.Set;
  */
 public class OpenApiFilterClass extends AbstractSpecFilter {
 
-  private static final Set<String> UNDESIRABLE = ImmutableSet.<String>builder()
-          .add("MediaType")
-          .add("ObjectNode")
-          .build();
+  private static final Set<String> UNDESIRABLE = Set.of(
+          "MediaType"
+          , "ObjectNode"
+  );
 
   /**
    * Constructor.

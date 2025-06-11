@@ -18,11 +18,8 @@ package uk.co.spudsoft.query.defn;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.common.collect.ImmutableList;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.List;
-import uk.co.spudsoft.query.main.ImmutableCollectionTools;
 
 /**
  * Processor that takes in multiple streams and uses them to dynamically add fields to the primary stream.

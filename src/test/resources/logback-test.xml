@@ -11,7 +11,7 @@
   <logger name="uk.co.spudsoft.query" level="DEBUG" additivity="false"/>
   <logger name="ContainerOutput" level="WARN" additivity="false"/>
 
-  <root level="DEBUG">
+  <root level="TRACE">
     <appender-ref ref="STDOUTPUT"/>
   </root>
 
