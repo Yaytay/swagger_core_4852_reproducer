@@ -114,22 +114,7 @@ public class ProcessorDynamicField implements Processor {
   private final ProcessorType type;
   private final String name;
   
-  private final boolean innerJoin;
-  private final boolean useCaseInsensitiveFieldNames;
-  
-  private final String fieldIdColumn;
-  private final String fieldNameColumn;
-  private final String fieldTypeColumn;
-  private final String fieldColumnColumn;
-  
-  private final ImmutableList<String> parentIdColumns;
-  private final ImmutableList<String> valuesParentIdColumns;
-  private final String valuesFieldIdColumn;
-  
-  private final String fieldValueColumnName;
-  
   private final SourcePipeline fieldDefns;
-  private final SourcePipeline fieldValues;
    
   @Override
   public ProcessorType getType() {
@@ -172,192 +157,6 @@ public class ProcessorDynamicField implements Processor {
   }
 
   /**
-   * Get the feed for the field values.
-   * 
-   * This data feed should result in at least three columns:
-   * <ul>
-   * <li>valuesParentIdColumn - ID of the parent row that is gaining a field value.
-   * <li>valuesFieldIdColumn - ID of the field that this row relates to (used to define the type and name of the resulting field).
-   * <li>Values - One or more fields that contain values, identified from the Column value in the FieldDefns feed.
-   * </ul>
-   * 
-   * 
-   * @return a SourcePipeline defining a feed that defines values for additional fields to add to the parent feed.
-   */
-  @Schema(description = """
-                        The feed for the field values.
-                        <P>
-                        This data feed should result in at least three columns:
-                        <ul>
-                        <li>valuesParentIdColumn - ID of the parent row that is gaining a field value.
-                        <li>valuesFieldIdColumn - ID of the field that this row relates to (used to define the type and name of the resulting field).
-                        <li>Values - One or more fields that contain values, identified from the Column value in the FieldDefns feed.
-                        </ul>
-                        """)
-  public SourcePipeline getFieldValues() {
-    return fieldValues;
-  }
-    
-  /**
-   * Get the inner join flag.
-   * If set to true the parent row will only be output if the child feed has at least one matching row.
-   * @return the inner join flag.
-   */
-  @Schema(description = """
-                        The inner join flag.
-                        <P>
-                        If set to true the parent row will only be output if the child feed has at least one matching row.
-                        """)
-  public boolean isInnerJoin() {
-    return innerJoin;
-  }
-
-  /**
-   * Get the case insensitivity flag.
-   * If set to true two dynamic field names that differ only in case will be considered to be the same field.
-   * For the sake of clarity this should usually be left false.
-   * @return the case insensitivity flag.
-   */
-  @Schema(description = """
-                        The inner join flag.
-                        <P>
-                        If set to true the parent row will only be output if the child feed has at least one matching row.
-                        <P>
-                        For the sake of clarity this should usually be left as false.
-                        """
-          , defaultValue = "false"
-          , requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-  public boolean isUseCaseInsensitiveFieldNames() {
-    return useCaseInsensitiveFieldNames;
-  }
-  
-  /**
-   * Get the parent ID columns.
-   * 
-   * This is the name of the field in the main stream that is to be used to match against child rows.
-   * The main stream must be sorted by this field.
-   * 
-   * @return the parent ID column.
-   */
-  @Schema(description = """
-                        The parent ID column.
-                        <P>
-                        This is the name of the field in the main stream that is to be used to match against child rows.
-                        The main stream must be sorted by this field.
-                        """
-          , maxLength = 100
-  )
-  public List<String> getParentIdColumns() {
-    return parentIdColumns;
-  }
-
-  /**
-   * Get the name of the column in the field defns feed that is used to identify the extra column.
-   * @return the name of the column in the field defns feed that is used to identify the extra column.
-   */
-  @Schema(description = """
-                        The name of the column in the field defns feed that is used to identify the extra column.
-                        """
-          , maxLength = 100
-  )
-  public String getFieldIdColumn() {
-    return fieldIdColumn;
-  }
-
-  /**
-   * Get the name of the column in the field defns feed that is used to name the extra column.
-   * @return the name of the column in the field defns feed that is used to name the extra column.
-   */
-  @Schema(description = """
-                        The name of the column in the field defns feed that is used to name the extra column.
-                        """
-          , maxLength = 100
-  )
-  public String getFieldNameColumn() {
-    return fieldNameColumn;
-  }
-
-  /**
-   * Get the name of the column in the field defns feed that is used to determine the type of the extra column.
-   * @return the name of the column in the field defns feed that is used to determine the type of the extra column.
-   */
-  @Schema(description = """
-                        The name of the column in the field defns feed that is used to determine the type of the extra column.
-                        """
-          , maxLength = 100
-  )
-  public String getFieldTypeColumn() {
-    return fieldTypeColumn;
-  }
-
-  /**
-   * Get the name of the column in the field defns feed that is used to find the name of the field in the values feed that contains the actual value.
-   * @return the name of the column in the field defns feed that is used to find the name of the field in the values feed that contains the actual value.
-   */
-  @Schema(description = """
-                        The name of the column in the field defns feed that is used to find the name of the field in the values feed that contains the actual value.
-                        """
-          , maxLength = 100
-  )
-  public String getFieldColumnColumn() {
-    return fieldColumnColumn;
-  }
-
-  /**
-   * Get the names of the columns in the values feed that contains the ID to match to the parent feed.
-   * The values feed must be sorted by these columns.
-   * @return the name of the column in the values feed that contains the ID to match to the parent feed.
-   */
-  @Schema(description = """
-                        The name of the column in the values feed that contains the ID to match to the parent feed.
-                        <P>
-                        The values feed must be sorted by this column.
-                        """
-          , maxLength = 100
-  )
-  public List<String> getValuesParentIdColumns() {
-    return valuesParentIdColumns;
-  }
-
-  /**
-   * Get the name of the column in the values feed that contains the ID of the field represented by that row.
-   * @return the name of the column in the values feed that contains the ID of the field represented by that row.
-   */
-  @Schema(description = """
-                        The name of the column in the values feed that contains the ID of the field represented by that row.
-                        """
-          , maxLength = 100
-  )
-  public String getValuesFieldIdColumn() {
-    return valuesFieldIdColumn;
-  }
-
-  /**
-   * Get the list of fields to look in for the field value.
-   * This should not be used, the correct approach is to identify the field value column in the field definition query - this approach only exists for backwards compatibility.
-   * 
-   * When set, this should be a comma separate list of field names from the values stream. 
-   * Even if this value is set, it will only be used if the field value column in the field definition query is not set.
-   * At runtime the named columns in the values stream will be checked in order and the first one that is not null be be taken.
-   * 
-   * @return the list of fields to look in for the field value.
-   */
-  @Schema(description = """
-                        The list of fields to look in for the field value.
-                        <P>
-                        This should not be used, the correct approach is to identify the field value column in the field definition query - this approach only exists for backwards compatibility.
-                        <P>
-                        When set, this should be a comma separate list of field names from the values stream.
-                        Even if this value is set, it will only be used if the field value column in the field definition query is not set.
-                        At runtime the named columns in the values stream will be checked in order and the first one that is not null be be taken.
-                        """
-          , maxLength = 200
-  )
-  public String getFieldValueColumnName() {
-    return fieldValueColumnName;
-  }
-
-  /**
    * Builder class for ProcessorDynamicField.
    */
   @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "")
@@ -366,18 +165,7 @@ public class ProcessorDynamicField implements Processor {
 
     private ProcessorType type = ProcessorType.DYNAMIC_FIELD;
     private String name;
-    private boolean innerJoin;
-    private boolean useCaseInsensitiveFieldNames;
-    private String fieldIdColumn = "id";
-    private String fieldNameColumn = "name";
-    private String fieldTypeColumn = "type";
-    private String fieldColumnColumn = "column";
-    private List<String> parentIdColumns;
-    private List<String> valuesParentIdColumns;
-    private String valuesFieldIdColumn;
-    private String fieldValueColumnName;
     private SourcePipeline fieldDefns;
-    private SourcePipeline fieldValues;
 
     private Builder() {
     }
@@ -403,106 +191,6 @@ public class ProcessorDynamicField implements Processor {
     }
 
     /**
-     * Set the {@link ProcessorDynamicField#innerJoin} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#innerJoin}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder innerJoin(final boolean value) {
-      this.innerJoin = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#useCaseInsensitiveFieldNames} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#useCaseInsensitiveFieldNames}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder useCaseInsensitiveFieldNames(final boolean value) {
-      this.useCaseInsensitiveFieldNames = value;
-      return this;
-    }
-    
-    /**
-     * Set the {@link ProcessorDynamicField#fieldIdColumn} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldIdColumn}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldIdColumn(final String value) {
-      this.fieldIdColumn = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#fieldNameColumn} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldNameColumn}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldNameColumn(final String value) {
-      this.fieldNameColumn = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#fieldTypeColumn} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldTypeColumn}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldTypeColumn(final String value) {
-      this.fieldTypeColumn = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#fieldColumnColumn} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldColumnColumn}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldColumnColumn(final String value) {
-      this.fieldColumnColumn = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#parentIdColumns} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#parentIdColumns}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder parentIdColumns(final List<String> value) {
-      this.parentIdColumns = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#valuesParentIdColumns} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#valuesParentIdColumns}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder valuesParentIdColumns(final List<String> value) {
-      this.valuesParentIdColumns = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#valuesFieldIdColumn} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#valuesFieldIdColumn}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder valuesFieldIdColumn(final String value) {
-      this.valuesFieldIdColumn = value;
-      return this;
-    }
-
-    /**
-     * Set the {@link ProcessorDynamicField#fieldValueColumnName} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldValueColumnName}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldValueColumnName(final String value) {
-      this.fieldValueColumnName = value;
-      return this;
-    }
-
-    /**
      * Set the {@link ProcessorDynamicField#fieldDefns} value in the builder.
      * @param value The value for the {@link ProcessorDynamicField#fieldDefns}.
      * @return this, so that this builder may be used in a fluent manner.
@@ -513,21 +201,11 @@ public class ProcessorDynamicField implements Processor {
     }
 
     /**
-     * Set the {@link ProcessorDynamicField#fieldValues} value in the builder.
-     * @param value The value for the {@link ProcessorDynamicField#fieldValues}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public Builder fieldValues(final SourcePipeline value) {
-      this.fieldValues = value;
-      return this;
-    }
-
-    /**
      * Construct a new instance of the ProcessorDynamicField class.
      * @return a new instance of the ProcessorDynamicField class.
      */
     public ProcessorDynamicField build() {
-      ProcessorDynamicField result = new ProcessorDynamicField(type, name, innerJoin, useCaseInsensitiveFieldNames, fieldIdColumn, fieldNameColumn, fieldTypeColumn, fieldColumnColumn, parentIdColumns, valuesParentIdColumns, valuesFieldIdColumn, fieldValueColumnName, fieldDefns, fieldValues);
+      ProcessorDynamicField result = new ProcessorDynamicField(type, name, fieldDefns);
       result.validateType(ProcessorType.DYNAMIC_FIELD, type);
       return result;
     }
@@ -542,23 +220,9 @@ public class ProcessorDynamicField implements Processor {
   }
 
   private ProcessorDynamicField(final ProcessorType type, final String name
-          , final boolean innerJoin, final boolean useCaseInsensitiveFieldNames
-          , final String fieldIdColumn, final String fieldNameColumn, final String fieldTypeColumn, final String fieldColumnColumn
-          , final List<String> parentIdColumns, final List<String> valuesParentIdColumns
-          , final String valuesFieldIdColumn, final String fieldValueColumnName, final SourcePipeline fieldDefns, final SourcePipeline fieldValues) {
+          , final SourcePipeline fieldDefns) {
     this.type = type;
     this.name = name;
-    this.innerJoin = innerJoin;
-    this.useCaseInsensitiveFieldNames = useCaseInsensitiveFieldNames;
-    this.fieldIdColumn = fieldIdColumn;
-    this.fieldNameColumn = fieldNameColumn;
-    this.fieldTypeColumn = fieldTypeColumn;
-    this.fieldColumnColumn = fieldColumnColumn;
-    this.parentIdColumns = ImmutableCollectionTools.copy(parentIdColumns);
-    this.valuesParentIdColumns = ImmutableCollectionTools.copy(valuesParentIdColumns);
-    this.valuesFieldIdColumn = valuesFieldIdColumn;
-    this.fieldValueColumnName = fieldValueColumnName;
     this.fieldDefns = fieldDefns;
-    this.fieldValues = fieldValues;
   }
 }
