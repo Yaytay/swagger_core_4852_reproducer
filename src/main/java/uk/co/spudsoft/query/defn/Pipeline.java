@@ -16,18 +16,12 @@
  */
 package uk.co.spudsoft.query.defn;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Duration;
+import java.text.Format;
 import java.util.List;
-import uk.co.spudsoft.query.main.ImmutableCollectionTools;
 
 /**
  * The Pipeline is the fundamental unit of processing in QueryEngine.
@@ -75,18 +69,7 @@ public final class Pipeline extends SourcePipeline {
      */
     @Override
     public Pipeline build() {
-      return new Pipeline(source, processors);
-    }
-
-    /**
-     * Set the {@link SourcePipeline#source} value in the builder.
-     * @param value The value for the {@link SourcePipeline#source}.
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    @Override
-    public Builder source(final Source value) {
-      this.source = value;
-      return this;
+      return new Pipeline(processors);
     }
 
     /**
@@ -109,8 +92,8 @@ public final class Pipeline extends SourcePipeline {
     return new Pipeline.Builder();
   }
 
-  private Pipeline(Source source, List<Processor> processors) {
-    super(source, processors);
+  private Pipeline(List<Processor> processors) {
+    super(processors);
   }  
   
 }

@@ -44,25 +44,7 @@ import uk.co.spudsoft.query.main.ImmutableCollectionTools;
                       """)
 public class SourcePipeline {
   
-  private final Source source;
   private final ImmutableList<Processor> processors;
-
-  /**
-   * The query for the pipeline.
-   * @return the query for the pipeline.
-   */
-  @SuppressFBWarnings(value = "EI_EXPOSE_REP", justification = "Source.name may have to be set after creation, must not be changed after PipelineInstance is created")
-  @Schema(
-          description = """
-                          <P>
-                          The query for the pipeline.
-                          </P>
-                          """
-          , requiredMode = Schema.RequiredMode.REQUIRED
-  )
-  public Source getSource() {
-    return source;
-  }
 
   /**
    * Processors to run on the data as it flows from the Source.
@@ -94,10 +76,6 @@ public class SourcePipeline {
   public static class Builder<T extends Builder<T>> {
 
     /**
-     * The {@link SourcePipeline#source} value in the builder.
-     */
-    protected Source source;
-    /**
      * The {@link SourcePipeline#processors} value in the builder.
      */
     protected List<Processor> processors;
@@ -118,16 +96,6 @@ public class SourcePipeline {
     }
     
     /**
-     * Set the {@link SourcePipeline#source} value in the builder.
-     * @param value The value for the {@link SourcePipeline#source}
-     * @return this, so that this builder may be used in a fluent manner.
-     */
-    public T source(final Source value) {
-      this.source = value;
-      return self();
-    }
-
-    /**
      * Set the {@link SourcePipeline#processors} value in the builder.
      * @param value The value for the {@link SourcePipeline#processors}
      * @return this, so that this builder may be used in a fluent manner.
@@ -142,7 +110,7 @@ public class SourcePipeline {
      * @return a new instance of the SourcePipeline class.
      */
     public SourcePipeline build() {
-      return new SourcePipeline(source, processors);
+      return new SourcePipeline(processors);
     }
   }
 
@@ -156,11 +124,9 @@ public class SourcePipeline {
 
   /**
    * Constructor.
-   * @param source The query for the pipeline.
    * @param processors Processors to run on the data as it flows from the Source.
    */
-  protected SourcePipeline(Source source, List<Processor> processors) {
-    this.source = source;
+  protected SourcePipeline(List<Processor> processors) {
     this.processors = ImmutableCollectionTools.copy(processors);
   }
 }
